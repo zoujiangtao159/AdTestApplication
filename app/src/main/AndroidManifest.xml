@@ -42,7 +42,8 @@
                 <data android:scheme="package"/>
             </intent-filter>
         </receiver>
-        <activity android:name="com.pingstart.adsdk.MRAIDBrowser" />
+        <activity android:name="com.pingstart.adsdk.PingStartBrowser" />
+        <activity android:name="com.pingstart.adsdk.VideoAdActivity" android:configChanges="orientation|keyboard|keyboardHidden|screenSize"/>
     </application>
 
 </manifest>

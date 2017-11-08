@@ -2,6 +2,7 @@ package com.example.admin.adtestapplication;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.Toast;
@@ -11,10 +12,14 @@ import com.pingstart.adsdk.MRAIDInterstitial;
 import com.pingstart.adsdk.PingStartSDK;
 import com.pingstart.adsdk.listener.MRAIDBannerListener;
 import com.pingstart.adsdk.listener.MRAIDInterstitialListener;
+import com.pingstart.adsdk.listener.RewardVideoListener;
+import com.pingstart.adsdk.mediation.PingStartVideo;
+import com.pingstart.adsdk.model.PingStartReward;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
 
+    private static final String TAG = MainActivity.class.getSimpleName();
     private FrameLayout mBannerContainer;
     private MRAIDBanner mBanner;
     private MRAIDInterstitial mInterstitial;
@@ -26,6 +31,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         findViewById(R.id.showBanner).setOnClickListener(this);
         findViewById(R.id.showInterstitial).setOnClickListener(this);
+        findViewById(R.id.showVideo).setOnClickListener(this);
         mBannerContainer = (FrameLayout) findViewById(R.id.banner_container);
     }
 
@@ -38,7 +44,47 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.showInterstitial:
                 showInterstitial();
                 break;
+            case R.id.showVideo:
+                showVideo();
+                break;
         }
+    }
+
+    private void showVideo() {
+        PingStartVideo.initializeRewardedVideo(this);
+        PingStartVideo.setRewardedVideoListener(new RewardVideoListener() {
+            @Override
+            public void onVideoAdClosed() {
+                Log.d(TAG, "onVideoAdClosed: ");
+            }
+
+            @Override
+            public void onVideoStarted() {
+                Log.d(TAG, "onVideoStarted: ");
+            }
+
+            @Override
+            public void onVideoLoaded() {
+                Log.d(TAG, "onVideoLoaded: ");
+                PingStartVideo.showRewardedVideo();
+            }
+
+            @Override
+            public void onVideoCompleted(PingStartReward pingStartReward) {
+                Log.d(TAG, "onVideoCompleted: currency:::"+pingStartReward.getLabel()+",amount:::"+pingStartReward.getAmount());
+            }
+
+            @Override
+            public void onAdError(String s) {
+                Log.d(TAG, "onAdError: " + s);
+            }
+
+            @Override
+            public void onAdClicked() {
+                Log.d(TAG, "onAdClicked: ");
+            }
+        });
+        PingStartVideo.loadRewardedVideo("4");
     }
 
     /**
@@ -103,8 +149,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        mBanner.destroy();
-        mInterstitial.destroy();
+        if (mBanner != null)
+            mBanner.destroy();
+        if (mInterstitial != null)
+            mInterstitial.destroy();
         mBanner = null;
         mInterstitial = null;
     }

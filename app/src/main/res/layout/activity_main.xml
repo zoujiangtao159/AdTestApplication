@@ -23,4 +23,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="interstitial" />
+    <Button
+        android:layout_width="wrap_content"
+        android:text="SHOW VIDEO"
+        android:id="@+id/showVideo"
+        android:layout_height="wrap_content" />
 </LinearLayout>
