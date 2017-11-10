@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             @Override
             public void onVideoCompleted(PingStartReward pingStartReward) {
-                Log.d(TAG, "onVideoCompleted: currency:::"+pingStartReward.getLabel()+",amount:::"+pingStartReward.getAmount());
+                Log.d(TAG, "onVideoCompleted: currency:::" + pingStartReward.getLabel() + ",amount:::" + pingStartReward.getAmount());
             }
 
             @Override
@@ -96,12 +96,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 new MRAIDInterstitialListener() {
                     @Override
                     public void mraidInterstitialLoaded() {
-                        mInterstitial.show();
+                        if (mInterstitial != null) {
+                            mInterstitial.show();
+                        }
                     }
 
                     @Override
                     public void mraidInterstitialClose() {
-                        mInterstitial.destroy();
+                        if (mInterstitial != null) {
+                            mInterstitial.destroy();
+                        }
                         showToast("mraidInterstitialClose");
                     }
 
@@ -149,6 +153,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onDetachedFromWindow() {
         super.onDetachedFromWindow();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
         if (mBanner != null)
             mBanner.destroy();
         if (mInterstitial != null)
